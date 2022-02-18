@@ -1,1 +1,2 @@
 # XeCours
+Serving static files
