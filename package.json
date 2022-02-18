@@ -2,7 +2,7 @@
   "name": "xecours",
   "version": "1.0.0",
   "description": "Serving static files",
-  "main": "server.js",
+  "main": "build/server.js",
   "scripts": {
     "build:client": "esbuild src/index.jsx --bundle --outfile=dist/bundle.js --loader:.js=jsx",
     "build:server": "esbuild server.js --bundle --outfile=build/server.js --platform=node --loader:.js=jsx",
