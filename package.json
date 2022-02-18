@@ -4,8 +4,20 @@
   "description": "Serving static files",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build:client": "esbuild src/index.jsx --bundle --outfile=dist/bundle.js --loader:.js=jsx",
+    "build:server": "esbuild server.js --bundle --outfile=build/server.js --platform=node --loader:.js=jsx",
+    "build": "npm run build:client && npm run build:server",
+    "start": "node build/server.js",
+    "production": "npm run build && npm run start",
+    "dev": "DEBUG=1 nodemon --exec \"npm run build && node build/server.js\" --watch ../ --ext js,jsx,json --ignore node_modules --ignore build --ignore dist"
   },
   "author": "Ahmed Abderraziq",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "esbuild": "^0.14.22",
+    "express": "^4.17.3",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "^5.0.0"
+  }
 }
