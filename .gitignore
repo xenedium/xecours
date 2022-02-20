@@ -3,3 +3,4 @@ certs/
 public/
 build/
 dist/
+config.json

@@ -24,6 +24,7 @@ httpApp.get("*", (req, res) => { //http to https redirect
     res.redirect("https://" + req.headers.host + req.url);
 });
 
+httpsApp.enable("trust proxy");
 httpsApp.use([LogMiddleware, express.static("public", {index: false})]);    //LogMiddleware & express.static
 httpsApp.use('/build', express.static('dist'));
 
