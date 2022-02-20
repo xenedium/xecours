@@ -38,7 +38,9 @@ const RenderDirIndex = (req, res) => {
                             lastModified: fstat.mtime,
                             author: results[0] ? results[0].username : "Unknown"
                         });
-                        if (data.length == files.length) res.json(data);
+                        if (data.length == files.length) res.json(data);    // First time doing this workaround, I don't know why it works
+                                                                            // but it does, so I'm not going to touch it  ¯\_(ツ)_/¯
+                                                                            // I just hope it doesn't break anything or I'll have to fix it
                     })
                 })
         }
