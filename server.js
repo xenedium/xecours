@@ -9,9 +9,14 @@ import certs from "./certs/certs.js"
 import GetHandlers from "./routes/GetHandlers.js";
 import GetHandlersAPI from "./routes/GetHandlersAPI.js";
 import LogMiddleware from "./utility/LogMiddleware.js";
+import Login from "./routes/Login.js";
+import UsersMe from './routes/UsersMe.js';
+import Create from "./routes/Create.js";
+import DeleteFile from "./routes/DeleteFile.js";
+import VerifyToken from "./routes/VerifyToken.js";
 
 
-// TODO: LOGGING/FILE LISTING WITH DETAILS/UPLOADING/DELETING
+// TODO: UPLOADING/COOLDOWN FOR CREATE/LOGIN
 
 
 // http app will be used to redirect http requests to https
@@ -24,13 +29,18 @@ httpApp.get("*", (req, res) => { //http to https redirect
     res.redirect("https://" + req.headers.host + req.url);
 });
 
-httpsApp.enable("trust proxy");
+httpsApp.use(express.json());
 httpsApp.use([LogMiddleware, express.static("public", {index: false})]);    //LogMiddleware & express.static
 httpsApp.use('/build', express.static('dist'));
 
-httpsApp.get("/api/v1/*", GetHandlersAPI);
-httpsApp.get("*", GetHandlers); //serve the rest of the get requests
+httpsApp.get("/api/v1/users/@me", [VerifyToken, UsersMe]);          //UsersMe
+httpsApp.get("/api/v1/*", GetHandlersAPI);                          //API for files and folders
+httpsApp.get("*", GetHandlers);                                     //serve the pages get requests
 
+httpsApp.post("/api/v1/login", Login);                              //Login
+httpsApp.post("/api/v1/create", Create);                            //account creation
+
+httpsApp.delete("/api/v1/*", [VerifyToken, DeleteFile]);            //DeleteFile
 
 if (process.env.DEBUG)
 {
