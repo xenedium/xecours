@@ -5,7 +5,9 @@
 import express from "express";
 import http from "http";
 import https from "https";
-import certs from "./certs/certs.js"
+import upload from "express-fileupload";
+
+import certs from "./certs/certs.js";
 import GetHandlers from "./routes/GetHandlers.js";
 import GetHandlersAPI from "./routes/GetHandlersAPI.js";
 import LogMiddleware from "./utility/LogMiddleware.js";
@@ -14,9 +16,10 @@ import UsersMe from './routes/UsersMe.js';
 import Create from "./routes/Create.js";
 import DeleteFile from "./routes/DeleteFile.js";
 import VerifyToken from "./routes/VerifyToken.js";
+import Upload from "./routes/Upload.js";
 
 
-// TODO: UPLOADING/COOLDOWN FOR CREATE/LOGIN
+// TODO: COOLDOWN FOR CREATE-LOGIN/TEST THE CREATE route
 
 
 // http app will be used to redirect http requests to https
@@ -32,6 +35,7 @@ httpApp.get("*", (req, res) => { //http to https redirect
 httpsApp.use(express.json());
 httpsApp.use([LogMiddleware, express.static("public", {index: false})]);    //LogMiddleware & express.static
 httpsApp.use('/build', express.static('dist'));
+httpsApp.use(upload());
 
 httpsApp.get("/api/v1/users/@me", [VerifyToken, UsersMe]);          //UsersMe
 httpsApp.get("/api/v1/*", GetHandlersAPI);                          //API for files and folders
@@ -41,6 +45,8 @@ httpsApp.post("/api/v1/login", Login);                              //Login
 httpsApp.post("/api/v1/create", Create);                            //account creation
 
 httpsApp.delete("/api/v1/*", [VerifyToken, DeleteFile]);            //DeleteFile
+
+httpsApp.post("/api/v1/upload*", [ Upload]);             //Upload
 
 if (process.env.DEBUG)
 {

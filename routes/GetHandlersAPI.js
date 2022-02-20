@@ -27,7 +27,7 @@ const RenderDirIndex = (req, res) => {
             const data = [];
             files.forEach(file => {
                 let fstat = fs.statSync(process.cwd() + '/public' + req.path.replace('api/v1/', '') + file);
-                db.query("select us.username from users as us, files as fi where us.id = fi.user_id AND fi.path = ?", 
+                db.query("select username from files where path = ?", 
                     [process.cwd() + '/public' + req.path.replace('api/v1/', '') + file], 
                     (err, results, fields) => {
                         if (err) res.status(500).json({error: "Internal Server Error"});
