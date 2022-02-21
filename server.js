@@ -17,9 +17,10 @@ import Create from "./routes/Create.js";
 import DeleteFile from "./routes/DeleteFile.js";
 import VerifyToken from "./routes/VerifyToken.js";
 import Upload from "./routes/Upload.js";
+import CreateDir from "./routes/CreateDir.js";
 
 
-// TODO: COOLDOWN FOR CREATE-LOGIN/TEST THE CREATE route/SWITCH TO ROUTING AND INCLUDE THE 404 IN THE DIRECTORY LISTING ROUTE
+// TODO: COOLDOWN FOR CREATE-LOGIN/SWITCH TO ROUTING AND INCLUDE THE 404 IN THE DIRECTORY LISTING ROUTE
 
 
 // http app will be used to redirect http requests to https
@@ -35,7 +36,12 @@ httpApp.get("*", (req, res) => { //http to https redirect
 httpsApp.use(express.json());
 httpsApp.use([LogMiddleware, express.static("public", {index: false})]);    //LogMiddleware & express.static
 httpsApp.use('/build', express.static('dist'));
-httpsApp.use(upload());
+httpsApp.use(upload({
+    limits: {
+        fileSize: 1024 * 1024 * 1024,
+    },
+    useTempFiles: true
+}));
 
 httpsApp.get("/api/v1/users/@me", [VerifyToken, UsersMe]);          //UsersMe
 httpsApp.get("/api/v1/*", GetHandlersAPI);                          //API for files and folders
@@ -46,7 +52,8 @@ httpsApp.post("/api/v1/create", Create);                            //account cr
 
 httpsApp.delete("/api/v1/*", [VerifyToken, DeleteFile]);            //DeleteFile
 
-httpsApp.post("/api/v1/upload*", [ Upload]);             //Upload
+httpsApp.post("/api/v1/upload*", [VerifyToken, Upload]);            //Upload
+httpsApp.post("/api/v1/createdir", [VerifyToken, CreateDir]);       //Creating directories
 
 if (process.env.DEBUG)
 {

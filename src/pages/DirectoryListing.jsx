@@ -63,7 +63,7 @@ export default function DirectoryListing(props) {
         {
             formData.append("files", files[i]);
         }
-        fetch("/api/v1/upload",
+        fetch("/api/v1/upload" + location,
         {
             method: "POST",
             headers:
