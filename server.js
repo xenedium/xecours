@@ -19,7 +19,7 @@ import VerifyToken from "./routes/VerifyToken.js";
 import Upload from "./routes/Upload.js";
 
 
-// TODO: COOLDOWN FOR CREATE-LOGIN/TEST THE CREATE route
+// TODO: COOLDOWN FOR CREATE-LOGIN/TEST THE CREATE route/SWITCH TO ROUTING AND INCLUDE THE 404 IN THE DIRECTORY LISTING ROUTE
 
 
 // http app will be used to redirect http requests to https
