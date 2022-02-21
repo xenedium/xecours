@@ -20,7 +20,7 @@ import Upload from "./routes/Upload.js";
 import CreateDir from "./routes/CreateDir.js";
 
 
-// TODO: COOLDOWN FOR CREATE-LOGIN/SWITCH TO ROUTING AND INCLUDE THE 404 IN THE DIRECTORY LISTING ROUTE
+// TODO: COOLDOWN FOR CREATE-LOGIN/SWITCH TO ROUTING AND INCLUDE THE 404 IN THE DIRECTORY LISTING ROUTE/MORE SECURITY IN THE FILE UPLOAD/DELETE ROUTE
 
 
 // http app will be used to redirect http requests to https

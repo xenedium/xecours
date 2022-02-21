@@ -5,10 +5,11 @@ export default function Upload(req, res) {
     const { username, is_mod } = req.user;
 
     if (!req.files) {res.status(400).json({success: false,message: "No file uploaded"}); return;}
+    if (req.path.includes("..")) {res.status(403).json({success: false,message: "403 - Forbidden"}); return;}
 
     if (is_mod == 0) {                      //THE USER IS NOT A MODERATOR
         res.status(401).json({ error: "Unauthorized : You need the mod role" });
-        
+
     }
     else {                                //THE USER IS A MODERATOR
         if (req.files.files.length !== undefined) {     //HANDLE MULTIPLE FILES
