@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 
-import NavBar from "../components/NavBar";
 import Err404 from "./Err404";
 
 
@@ -99,7 +98,6 @@ export default function DirectoryListing(props) {
     else 
     return (
         <div>
-            <NavBar />
 
             {
                 data.map((item, index) => {
