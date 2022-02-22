@@ -30,7 +30,7 @@ const RenderDirIndex = (req, res) => {
                             type: fstat.isDirectory() ? "dir" : "file",
                             size: fstat.size,
                             lastModified: fstat.mtime,
-                            author: results[0] ? results[0].username : "Unknown"
+                            author: results[0] ? results[0].username : "Sorrow"
                         });
                         if (data.length == files.length) res.json(data);    // First time doing this workaround, I don't know why it works
                         // but it does, so I'm not going to touch it  ¯\_(ツ)_/¯
