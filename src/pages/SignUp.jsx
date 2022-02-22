@@ -5,6 +5,7 @@ import ReactDOM from "react-dom";
 export default function SignUp(props) {
 
     useEffect(() => {
+        document.title = "Sign Up";
         if (window.localStorage.getItem("token")) {
             fetch("/api/v1/users/@me",
                 {
