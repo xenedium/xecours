@@ -23,9 +23,13 @@ export default function Create (req, res, next) {
         db.query("INSERT INTO users (username, password, email, first_name, last_name) VALUES (?, ?, ?, ?, ?)", 
             [username, crypto.createHash('sha256').update(password).digest('hex'), email, first_name, last_name], 
             (err, results, fields) => {
-                const token = jwt.sign({ username: username }, secret, { expiresIn: '72h' });
                 if (err) res.status(500).json({error: "Internal Server Error"});
-                else res.json({ token: token });
+                else
+                {
+                    const token = jwt.sign({ username: username }, secret, { expiresIn: '72h' });
+                    res.json({ token: token });
+                }
+                
             })
     })
 }
