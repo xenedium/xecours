@@ -20,10 +20,10 @@ export default function Create (req, res, next) {
         if (err) {res.status(500).json({error: "Internal Server Error"});return;}
         if (results.length != 0) {res.status(409).json({error: "Conflict : username already in use"});return;}
         
-        const token = jwt.sign({ username: username }, secret, { expiresIn: '24h' });
         db.query("INSERT INTO users (username, password, email, first_name, last_name) VALUES (?, ?, ?, ?, ?)", 
             [username, crypto.createHash('sha256').update(password).digest('hex'), email, first_name, last_name], 
             (err, results, fields) => {
+                const token = jwt.sign({ username: username }, secret, { expiresIn: '72h' });
                 if (err) res.status(500).json({error: "Internal Server Error"});
                 else res.json({ token: token });
             })

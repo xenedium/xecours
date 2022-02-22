@@ -12,7 +12,7 @@ export default function Login (req, res) {
             if (err) {res.status(500).json({error: "Internal Server Error"});return;}
             if (results.length == 0) res.status(401).json({error: "Unauthorized"});
             
-            const token = jwt.sign({ username: username }, secret, { expiresIn: '24h' });
+            const token = jwt.sign({ username: username }, secret, { expiresIn: '72h' });
             res.json({ token: token });
             
         })
