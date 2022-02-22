@@ -1,16 +1,29 @@
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
+
 import NavBar from "../components/NavBar";
+import Err404 from "./Err404";
 
 
 export default function DirectoryListing(props) {
+
+    //if (props.error) return <Err404 message={props.error}/>;
 
 
     const [isLoggedIn, setIsLoggedIn] = React.useState(false);
     const [userdata, setUserdata] = React.useState({});
     const [location, setLocation] = React.useState();
+    const [data, setData] = React.useState([]);
+    const [res, setRes] = React.useState([]);
 
     useEffect(() => {
+        document.title = "Directory Listing";
+        fetch("/api/v1" + window.location.pathname).then(resp => {
+            setRes(resp);
+            return resp.json();
+        }).then(json => {
+            setData(json);
+        })
 
         if (window.localStorage.getItem("token"))
         {
@@ -29,6 +42,7 @@ export default function DirectoryListing(props) {
         setLocation(window.location.pathname);
 
     }, [])
+
 
 
     const Delete = (filepath) => {
@@ -81,13 +95,14 @@ export default function DirectoryListing(props) {
         })
     }
 
-
+    if (res.status === 404) return <Err404 message="404: Not Found" />;
+    else 
     return (
         <div>
             <NavBar />
 
             {
-                props.data.map((item, index) => {
+                data.map((item, index) => {
                     return (
                         <div key={index}>
                             <p>

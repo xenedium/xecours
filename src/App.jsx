@@ -2,22 +2,26 @@ import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 
 import DirectoryListing from "./pages/DirectoryListing";
-import Err404 from "./pages/Err404";
+import SignUp from "./pages/SignUp";
+import Login from "./pages/Login";
+
 
 export default function App() {
 
-    
-    const [res, setRes] = React.useState([]);
-    const [json, setJson] = React.useState([]);
-    useEffect(() => {
-        fetch("/api/v1" + window.location.pathname).then(resp => {
-            setRes(resp);
-            return resp.json();
-        }).then(json => {
-            setJson(json);
-        })
-    }, []);
+    const [path, setPath] = React.useState("");
+    const [loading, setLoading] = React.useState(true);
 
-    if (res.status === 404) return <Err404 message={json.error}/>;
-    return <DirectoryListing data={json}/>;
+    useEffect(() => {
+        setPath(window.location.pathname);
+        setLoading(false);
+    }, [])
+
+    if (loading) return <div>Loading...</div>;
+    else
+    {
+        if (path === "/login" || path === "/login/") return <Login />;
+        else if (path === "/signup" || path === "/signup/" ) return <SignUp />;
+        else return <DirectoryListing />;
+    }
+    
 }
