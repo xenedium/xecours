@@ -6,118 +6,289 @@ import Err404 from "./Err404";
 
 export default function DirectoryListing(props) {
 
-    //if (props.error) return <Err404 message={props.error}/>;
-
 
     const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-    const [userdata, setUserdata] = React.useState({});
+    const [username, setUsername] = React.useState(null);
     const [location, setLocation] = React.useState();
-    const [data, setData] = React.useState([]);
+    const [fileData, setFileData] = React.useState([]);
     const [res, setRes] = React.useState([]);
+    const [path, setPath] = React.useState([]);
 
     useEffect(() => {
         document.title = "Directory Listing";
-        fetch("/api/v1" + window.location.pathname).then(resp => {
-            setRes(resp);
-            return resp.json();
+        setPath(window.location.pathname);
+        fetch("/api/v1" + window.location.pathname).then(res => {
+            setRes(res);
+            return res.json();
         }).then(json => {
-            setData(json);
+            json.sort((a, b) => {
+                if (a.type === "dir" && b.type !== "dir") {
+                    return -1;
+                }
+                if (a.type !== "dir" && b.type === "dir") {
+                    return 1;
+                }
+                return a.name.localeCompare(b.name);
+            });
+            setFileData(json);
         })
 
-        if (window.localStorage.getItem("token"))
-        {
-            setIsLoggedIn(true);
+        if (window.localStorage.getItem("token")) {
             fetch("/api/v1/users/@me",
-            {
-                method: "GET",
-                headers: 
                 {
-                    "Authorization": "Bearer " + window.localStorage.getItem("token")
-                }
-            })
-            .then(res => res.json())
-            .then(data => setUserdata(data));
+                    method: "GET",
+                    headers:
+                    {
+                        "Authorization": "Bearer " + window.localStorage.getItem("token")
+                    }
+                })
+                .then(res => {
+                    if (res.status === 200) {
+                        res.json().then(json => setUsername(json.username));
+                        setIsLoggedIn(true);
+                    }
+                    else localStorage.removeItem("token");
+                })
         }
         setLocation(window.location.pathname);
 
     }, [])
 
 
-
-    const Delete = (filepath) => {
-        fetch("/api/v1" + filepath,
-        {
-            method: "DELETE",
-            headers: 
-            {
-                "Authorization": "Bearer " + window.localStorage.getItem("token")
-            },
-            
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success)
-            {
-                window.location.reload();
-            }
-        })
+    const FormatSize = (size) => {
+        if (size < 1024) return size + " B";
+        else if (size < 1024 * 1024) return (size / 1024).toFixed(2) + " KB";
+        else if (size < 1024 * 1024 * 1024) return (size / 1024 / 1024).toFixed(2) + " MB";
+        else return (size / 1024 / 1024 / 1024).toFixed(2) + " GB";
+    }
+    const FormatDate = (date) => {
+        return new Date(date).toLocaleString();
     }
 
-    const [files, setFiles] = React.useState([]);
-
-    const HandleChange = (e) => {
-        setFiles(e.target.files);
-    }
-
-    const HandleFileSubmission = (e) => {
-        e.preventDefault();
-        const formData = new FormData();
-        for (let i = 0; i < files.length; i++)
-        {
-            formData.append("files", files[i]);
+    const HandleDelete = (filepath) => {
+        if (!isLoggedIn) alert("You must be logged in to delete files");
+        else {
+            fetch("/api/v1" + filepath,
+                {
+                    method: "DELETE",
+                    headers:
+                    {
+                        "Authorization": "Bearer " + window.localStorage.getItem("token")
+                    }
+                })
+                .then(res => {
+                    if (res.status === 200) {
+                        window.location.reload();
+                    }
+                })
         }
-        fetch("/api/v1/upload" + location,
-        {
-            method: "POST",
-            headers:
-            {
-                "Authorization": "Bearer " + window.localStorage.getItem("token")
-            },
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success)
-            {
-                window.location.reload();
+    };
+    const HandleFileUpload = (e) => {
+        if (!isLoggedIn) alert("You must be logged in to delete files");
+        else {
+            e.preventDefault();
+            let formData = new FormData();
+            for (let i = 0; i < e.target.files.length; i++) {
+                formData.append("files", e.target.files[i]);
             }
-        })
-    }
+            fetch("/api/v1/upload" + window.location.pathname,
+                {
+                    method: "POST",
+                    headers:
+                    {
+                        "Authorization": "Bearer " + window.localStorage.getItem("token")
+                    },
+                    body: formData
+                })
+                .then(res => {
+                    if (res.status === 200) {
+                        window.location.reload();
+                    }
+                })
+        }
+    };
+    const HandleNewDir = (e) => {
+        if (!isLoggedIn) alert("You must be logged in to delete files");
+        else {
+            const name = prompt("Enter the name of the new directory");
+            fetch("/api/v1/createdir",
+                {
+                    method: "POST",
+                    headers:
+                    {
+                        "Authorization": "Bearer " + window.localStorage.getItem("token"),
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        path: name})
+                })
+                .then(res => {
+                    if (res.status === 200) {
+                        window.location.reload();
+                    }
+                })
+        }
+    };
 
     if (res.status === 404) return <Err404 message="404: Not Found" />;
-    else 
-    return (
-        <div>
+    else
+        return (
+            <div>
+                <div className="container-fluid">
+                    <div className="row flex-nowrap">
+                        <div className="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
+                            <div className="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+                                <a href="/" className="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                                    <span className="fs-5 d-none d-sm-inline">{path}</span>
+                                </a>
+                                {/*
+                                    <ul className="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+                                        <li>
+                                            <a href="#submenu1" data-bs-toggle="collapse" className="nav-link px-0 align-middle text-white dropdown-toggle">
+                                                <i className="fs-4 bi-speedometer2"></i> <span className="ms-1 d-none d-sm-inline ">My Uploaded files</span> </a>
+                                            <ul className="collapse show nav flex-column ms-1" id="submenu1" data-bs-parent="#menu">
+                                                {/*
+                                                <div>
+                                                    <li className="w-100">
+                                                        <a href="#" className="nav-link px-0"> <span className="d-none d-sm-inline">Item</span> 1 </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#" className="nav-link px-0"> <span className="d-none d-sm-inline">Item</span> 2 </a>
+                                                    </li>
+                                                </div>
+                                                }
 
-            {
-                data.map((item, index) => {
-                    return (
-                        <div key={index}>
-                            <p>
-                                {item.name} - {item.type} - {item.size} - {item.lastModified} - {item.author}
-                                <button onClick={() => { Delete(window.location.pathname + item.name) }} disabled={!isLoggedIn}>Delete this file</button>
-                            </p>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <a href="#submenu2" data-bs-toggle="collapse" className="nav-link px-0 align-middle text-white dropdown-toggle">
+                                                <i className="fs-4 bi-bootstrap"></i> <span className="ms-1 d-none d-sm-inline">Pending Uploaded files</span></a>
+                                            <ul className="collapse nav flex-column ms-1" id="submenu2" data-bs-parent="#menu">
+                                                {/*
+                                                <div>
+                                                    <li className="w-100">
+                                                        <a href="#" className="nav-link px-0"> <span className="d-none d-sm-inline">Item</span> 1</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#" className="nav-link px-0"> <span className="d-none d-sm-inline">Item</span> 2</a>
+                                                    </li>
+                                                </div>
+                                                }
+
+                                            </ul>
+                                        </li>
+                                    </ul>*/
+                                }
+                                <hr />
+                                <div className="dropdown pb-4">
+                                    <a href="#" className="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <img src="https://www.kindpng.com/picc/m/24-248253_user-profile-default-image-png-clipart-png-download.png" alt="hugenerd" width="30" height="30" className="rounded-circle" />
+                                        <span className="d-none d-sm-inline mx-1">{username ? username : "Anonymous"}</span>
+                                    </a>
+                                    <ul className="dropdown-menu dropdown-menu-dark text-small shadow">
+                                        {/*
+                                            <div>
+                                                <li><a className="dropdown-item" href="#">New file</a></li>
+                                                <li><a className="dropdown-item" href="#">Settings</a></li>
+                                                <li><a className="dropdown-item" href="#">Profile</a></li>
+                                                <li>
+                                                    <hr className="dropdown-divider" />
+                                                </li>
+                                            </div>
+                                            */
+                                        }
+
+                                        <li><a className="dropdown-item" href="#" onClick={() => {
+                                            if (!isLoggedIn) window.location.href = "/login";
+                                            else {
+                                                localStorage.removeItem("token");
+                                                setIsLoggedIn(false);
+                                                window.location.reload();
+                                            }
+                                        }}>{isLoggedIn ? "Log out" : "Sign In"}</a></li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
-                    )
-                })
-            }
+                        <div className="col py-3">
+                            <button className="btn btn-dark mx-2" onClick={HandleNewDir}><i className="fa-solid fa-plus"></i> New Directory </button>
+                            <button className="btn btn-dark" onClick={() => {document.getElementById("filebtn").click()}}><i className="fa-solid fa-upload"></i> Upload File </button>
+                            <input type="file" id="filebtn" multiple hidden onChange={HandleFileUpload}/>
+                            <table className="table table-striped table-hover">
+                                <thead>
 
-            <form action={"/api/v1/upload" + location} method="POST" encType="multipart/form-data">
-                <input onChange={HandleChange} type="file" name="file" multiple />
-                <button onClick={HandleFileSubmission}>Upload</button>
-            </form>
-        </div>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Size</th>
+                                        <th>Uploaded On</th>
+                                        <th>Uploaded By</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        fileData.map((file, index) => {
+                                            return (
+                                                <tr key={index}>
+                                                    <td>
+                                                        <a href={`${path}${file.name}`}>
+                                                            <button className={file.type === "dir" ? "btn btn-primary" : "btn btn-success"}>
+                                                                {file.name}
+                                                            </button>
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        {file.type === "file" ? FormatSize(file.size) : "-"}
+                                                    </td>
+                                                    <td>
+                                                        {FormatDate(file.lastModified)}
+                                                    </td>
+                                                    <td>
+                                                        {file.author}
+                                                    </td>
+                                                    <td>
+                                                        <button className="btn btn-danger" onClick={() => HandleDelete(path + file.name)}> Delete </button>
+                                                    </td>
+                                                </tr>
+                                            )
+                                        })
 
-    );
+                                    }
+                                </tbody>
+
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+                {/*
+                    <div>
+                        <footer className="d-flex flex-wrap justify-content-evenly align-items-center py-3 my-4 border-top" style={{ position: "absolute", bottom: "0px", width: '100%' }}>
+                            <div className="col-md-4 d-flex align-items-center justify-content-center">
+                                <div className="d-flex">
+                                    Ahmed Abderraziq
+                                </div>
+                                <ul className="nav col-md-4 list-unstyled d-flex">
+                                    <li className="ms-3"><a className="text-muted" href="https://abderraziq.com"><i className="fa-solid fa-globe"></i></a></li>
+                                    <li className="ms-3"><a className="text-muted" href="https://github.com/xenedium"><i className="fa-brands fa-github"></i></a></li>
+                                    <li className="ms-3"><a className="text-muted" href="https://github.com/xenedium"><i className="fa-brands fa-instagram"></i></a></li>
+                                </ul>
+                            </div>
+                            <div className="col-md-4 d-flex align-items-center justify-content-center">
+                                <div className="d-flex">
+                                    Yahya rabii
+                                </div>
+                                <ul className="nav col-md-4 list-unstyled d-flex">
+                                    <li className="ms-3"><a className="text-muted" href="https://github.com/Yahya-rabii"><i className="fa-solid fa-globe"></i></a></li>
+                                    <li className="ms-3"><a className="text-muted" href="https://github.com/Yahya-rabii"><i className="fa-brands fa-github"></i></a></li>
+                                    <li className="ms-3"><a className="text-muted" href="https://www.instagram.com/rabii_yahya/"><i className="fa-brands fa-instagram"></i></a></li>
+                                </ul>
+                            </div>
+                        </footer>
+                    </div>*/
+                }
+            </div>
+
+        );
 
 }

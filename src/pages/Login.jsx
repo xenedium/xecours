@@ -107,7 +107,7 @@ export default function Login(props) {
                                                 Password is required
                                             </div>
                                         </div>
-                                        <div class="alert alert-danger" role="alert" style={{ display: error ? "block" : "none" }} >
+                                        <div className="alert alert-danger" role="alert" style={{ display: error ? "block" : "none" }} >
                                             {error ? error + Cooldown() : ""}
                                         </div>
                                         <div className="d-flex align-items-center">
