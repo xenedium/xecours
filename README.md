@@ -73,15 +73,15 @@ const certs = {
 export default certs;
 ```
 ## Create a config.json file :
+All the fields must be given, replace each key with it's value
 ```json
-//All the fields must be given
 {
-    "username": "",     //mysql username
-    "password": "",     //mysql password
-    "host": "",         //mysql host
-    "database": "",     //mysql db name
-    "discordhook": "",  //discord webhook
-    "secret": ""        //jwt secret
+    "username": "mysql username",     
+    "password": "mysql password",     
+    "host": "mysql host",         
+    "database": "mysql db name",     
+    "discordhook": "discord webhook",  
+    "secret": "jwt secret"        
 }
 ```
 ## Create an empty directory called public then run using :
