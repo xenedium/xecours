@@ -22,4 +22,4 @@ The open your terminal and run this :
 $ npx prisma migrate dev --name init
 ```
 
-## This app is still under developement. More documentation will be available as soon as the app is finished
+## This app is still under developement. More documentation will be available as soon as the app is finished, Switch the branch to see the old version made with React/Express
