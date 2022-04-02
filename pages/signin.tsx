@@ -8,7 +8,7 @@ import {
 import Link from "next/link";
 import Footer from "../components/Footer";
 
-export default function Login(props) {
+export default function Login() {
     useEffect(() => {
         document.title = "Login";
         if (window.localStorage.getItem("token")) {
@@ -39,9 +39,9 @@ export default function Login(props) {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
 
-    const HandleLogin = (e) => {
+    const HandleLogin = (e : React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        fetch("/api/v1/login",
+        fetch("/api/v1/signin",
             {
                 method: "POST",
                 headers:
@@ -64,10 +64,10 @@ export default function Login(props) {
             })
     }
 
-    const HandleUsernameChange = (e) => {
+    const HandleUsernameChange = (e : React.ChangeEvent<HTMLInputElement>) => {
         setUsername(e.target.value);
     }
-    const HandlePasswordChange = (e) => {
+    const HandlePasswordChange = (e : React.ChangeEvent<HTMLInputElement>) => {
         setPassword(e.target.value);
     }
 
@@ -96,7 +96,7 @@ export default function Login(props) {
                             <div className="card shadow-lg">
                                 <div className="card-body p-5">
                                     <h1 className="fs-4 card-title fw-bold mb-4">Login</h1>
-                                    <form method="POST" className="needs-validation" noValidate="" autoComplete="off">
+                                    <form method="POST" className="needs-validation" autoComplete="off">
                                         <div className="mb-3">
                                             <label className="mb-2 text-muted" htmlFor="username">Username</label>
                                             <input id="username" type="text" className="form-control" name="username" required autoFocus onChange={HandleUsernameChange} />

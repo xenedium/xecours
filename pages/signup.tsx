@@ -45,27 +45,27 @@ export default function SignUp(props) {
     const [password, setPassword] = useState("");
     const [error, setError] = useState(null);
 
-    const HandleEmailChange = (e) => {
+    const HandleEmailChange = (e : React.ChangeEvent<HTMLInputElement>) => {
         setEmail(e.target.value);
     }
 
-    const HandleUsernameChange = (e) => {
+    const HandleUsernameChange = (e : React.ChangeEvent<HTMLInputElement>) => {
         setUsername(e.target.value);
     }
 
-    const HandleFirstnameChange = (e) => {
+    const HandleFirstnameChange = (e : React.ChangeEvent<HTMLInputElement>) => {
         setFirstname(e.target.value);
     }
 
-    const HandleLastnameChange = (e) => {
+    const HandleLastnameChange = (e : React.ChangeEvent<HTMLInputElement>) => {
         setLastname(e.target.value);
     }
 
-    const HandlePasswordChange = (e) => {
+    const HandlePasswordChange = (e : React.ChangeEvent<HTMLInputElement>) => {
         setPassword(e.target.value);
     }
 
-    const HandleSignUp = (e) => {
+    const HandleSignUp = (e : React.MouseEvent<HTMLInputElement>) => {
         e.preventDefault();
         fetch("/api/v1/create",
             {
@@ -115,7 +115,7 @@ export default function SignUp(props) {
                             <div className="card shadow-lg">
                                 <div className="card-body p-5">
                                     <h1 className="fs-4 card-title fw-bold mb-4">Sign Up</h1>
-                                    <form className="needs-validation" noValidate="" autoComplete="off">
+                                    <form className="needs-validation" autoComplete="off">
                                         <div className="mb-3">
                                             <label className="mb-2 text-muted" htmlFor="email">Email</label>
                                             <input id="email" type="email" className="form-control" name="email" required autoFocus onChange={HandleEmailChange} />
