@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import Err404 from "./Err404";
 
-import { useRouter } from "next/router";
+import Link from "next/link";
 import Footer from "./Footer";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,29 +12,20 @@ export default function DirectoryListing(props) {
 
     const [isLoggedIn, setIsLoggedIn] = React.useState(false);
     const [username, setUsername] = React.useState(null);
-    const [location, setLocation] = React.useState();
     const [fileData, setFileData] = React.useState([]);
-    const [res, setRes] = React.useState([]);
-    const [path, setPath] = React.useState([]);
-    const router = useRouter();
-    useEffect(() => { setPath(router.asPath) })
-    /*
+    const [res, setRes] = React.useState(400);
+    const [path, setPath] = React.useState("/");
+    const [prevPath, setPrevPath] = React.useState("/");
+
+
     useEffect(() => {
-        setPath(router.asPath);
+        setPrevPath("/" + window.location.pathname.split("/").slice(0, -1).splice(1).toString());
+        setPath(window.location.pathname);
         fetch("/api/v1" + window.location.pathname).then(res => {
             setRes(res);
             return res.json();
-        }).then(json => {
-            json.sort((a, b) => {
-                if (a.type === "dir" && b.type !== "dir") {
-                    return -1;
-                }
-                if (a.type !== "dir" && b.type === "dir") {
-                    return 1;
-                }
-                return a.name.localeCompare(b.name);
-            });
-            setFileData(json);
+        }).then(json_data => {
+            setFileData(json_data);
         })
 
         if (window.localStorage.getItem("token")) {
@@ -54,11 +45,9 @@ export default function DirectoryListing(props) {
                     else localStorage.removeItem("token");
                 })
         }
-        setLocation(window.location.pathname);
+    }, []);
 
-    }, [])
 
-    */
     const FormatSize = (size) => {
         if (size < 1024) return size + " B";
         else if (size < 1024 * 1024) return (size / 1024).toFixed(2) + " KB";
@@ -135,12 +124,6 @@ export default function DirectoryListing(props) {
                 })
         }
     };
-
-    const HandlePrevFolder = (e) => {
-        if (path.length > 1) {
-            window.location.href = path.slice(0, path.length - 1).join("/");
-        }
-    }
 
     if (res.status === 404) return <Err404 />;
     else
@@ -224,7 +207,10 @@ export default function DirectoryListing(props) {
                         </div>
                         <div className="col py-3 d-flex flex-column min-vh-100">
                             <div className="d-flex bd-highlight mb-3">
-                                <button className="btn btn-dark me-auto p-2 bd-highlight" onClick={HandlePrevFolder}><FontAwesomeIcon icon={faLeftLong} width={20} height={20} /> Previous folder </button>
+                                <Link href={prevPath} replace={true}>
+                                    <a><button className="btn btn-dark me-auto p-2 bd-highlight"><FontAwesomeIcon icon={faLeftLong} width={20} height={20} /> Previous folder </button></a>
+                                </Link>
+
                                 <button className="btn btn-dark p-2 bd-highlight mx-2" onClick={HandleNewDir}><FontAwesomeIcon icon={faPlus} width={20} height={20} /> New Directory </button>
                                 <button className="btn btn-dark p-2 bd-highlight" onClick={() => { document.getElementById("filebtn").click() }}><FontAwesomeIcon icon={faUpload} width={20} height={20} /> Upload File </button>
                                 <input type="file" id="filebtn" multiple hidden onChange={HandleFileUpload} />
@@ -247,7 +233,7 @@ export default function DirectoryListing(props) {
                                             return (
                                                 <tr key={index}>
                                                     <td>
-                                                        <a href={`${path}${file.name}`}>
+                                                        <a href={`${path}/${file.name}`.replace("//", "/")}>
                                                             <button className={file.type === "dir" ? "btn btn-primary" : "btn btn-success"}>
                                                                 {file.name}
                                                             </button>

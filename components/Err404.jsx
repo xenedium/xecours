@@ -9,8 +9,8 @@ export default function Err404(props) {
     return (
         <div className="d-flex flex-column min-vh-100">
             <div id="notfound">
-                <div class="notfound">
-                    <div class="notfound-404">
+                <div className="notfound">
+                    <div className="notfound-404">
                         <div></div>
                         <h1>404</h1>
                     </div>
