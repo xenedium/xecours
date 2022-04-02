@@ -1,5 +1,5 @@
 import DirectoryListing from "../components/DirectoryListing";
 
-export default function index(){
+export default function xecours(){
     return <DirectoryListing/>
 }
