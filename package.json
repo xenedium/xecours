@@ -15,13 +15,18 @@
     "@fortawesome/free-regular-svg-icons": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@fortawesome/react-fontawesome": "^0.1.18",
+    "@prisma/client": "^3.11.1",
+    "@types/react": "^17.0.43",
     "bootstrap": "^5.1.3",
     "next": "12.1.4",
     "react": "18.0.0",
-    "react-dom": "18.0.0"
+    "react-dom": "18.0.0",
+    "typescript": "^4.6.3"
   },
   "devDependencies": {
+    "@types/node": "^17.0.23",
     "eslint": "8.12.0",
-    "eslint-config-next": "12.1.4"
+    "eslint-config-next": "12.1.4",
+    "prisma": "^3.11.1"
   }
 }

@@ -1,0 +1,47 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+model deleted_files {
+    id       Int    @id @default(autoincrement())
+    username String @db.VarChar(20)
+    path     String @db.VarChar(200)
+    users    users  @relation(fields: [username], references: [username], onDelete: NoAction, map: "deleted_files_users_username_fk")
+
+    @@index([username], map: "deleted_files_users_username_fk")
+}
+
+model files {
+    path     String @id @db.VarChar(100)
+    username String @db.VarChar(20)
+    users    users  @relation(fields: [username], references: [username], onDelete: NoAction, map: "files_users_username_fk")
+
+    @@index([username], map: "files_users_username_fk")
+}
+
+model logs {
+    id         Int     @id @default(autoincrement())
+    ip         String? @db.VarChar(16)
+    method     String  @db.VarChar(10)
+    url        String  @db.VarChar(200)
+    user_agent String? @db.VarChar(200)
+    referer    String? @db.VarChar(200)
+    timestamp  BigInt
+}
+
+model users {
+    id            Int             @id @default(autoincrement())
+    username      String          @unique(map: "users_username_uindex") @db.VarChar(10)
+    password      String          @db.VarChar(64)
+    email         String          @db.VarChar(100)
+    first_name    String          @db.VarChar(20)
+    last_name     String          @db.VarChar(30)
+    is_mod        Int             @default(0) @db.TinyInt
+    deleted_files deleted_files[]
+    files         files[]
+}
