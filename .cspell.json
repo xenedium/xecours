@@ -1,15 +1,41 @@
 {
-  "ignorePaths": [
-    "**/node_modules/**",
-    "**/vscode-extension/**",
-    "**/.git/**",
-    ".vscode",
-    "megalinter",
-    "package-lock.json",
-    "report"
-  ],
-  "language": "en",
-  "noConfigSearch": true,
-  "words": [],
-  "version": "0.2"
+    "ignorePaths": [
+        "**/node_modules/**",
+        "**/vscode-extension/**",
+        "**/.git/**",
+        ".vscode",
+        "megalinter",
+        "package-lock.json",
+        "report"
+    ],
+    "language": "en",
+    "noConfigSearch": true,
+    "words": [
+        "Abderraziq",
+        "Cooldown",
+        "Cours",
+        "Firstname",
+        "Lastname",
+        "Yahya",
+        "createdir",
+        "filebtn",
+        "firstname",
+        "fontawesome",
+        "fortawesome",
+        "lastname",
+        "mainpage",
+        "mydb",
+        "notfound",
+        "plateform",
+        "pnpm",
+        "rabii",
+        "signin",
+        "signup",
+        "stefanzweifel",
+        "unstyled",
+        "venv",
+        "vercel",
+        "xecours"
+    ],
+    "version": "0.2"
 }

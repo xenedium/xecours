@@ -13,7 +13,7 @@ $ npm install
 
 ## Database setup :
 Create a .env file and add the following line :
-```
+```sh
 DATABASE_URL="mysql://username:password@localhost:3306/mydb"
 ```
 
