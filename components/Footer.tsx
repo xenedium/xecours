@@ -1,8 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-    faArrowLeftLong,
-    faCode,
-    faMugHot,
     faGlobe
 } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -11,7 +8,7 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 
 
-export default function Footer(props) {
+export default function Footer() {
     return (
         <>
             <footer className="d-flex flex-wrap justify-content-evenly align-items-center py-3 my-4 border-top" style={{}}>
