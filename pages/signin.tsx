@@ -7,10 +7,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import Footer from "../components/Footer";
+import Head from "next/head";
+import Image from "next/image";
 
 export default function Login() {
     useEffect(() => {
-        document.title = "Login";
         if (window.localStorage.getItem("token")) {
             fetch("/api/v1/users/@me",
                 {
@@ -39,7 +40,7 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
 
-    const HandleLogin = (e : React.MouseEvent<HTMLButtonElement>) => {
+    const HandleLogin = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         fetch("/api/v1/signin",
             {
@@ -64,10 +65,10 @@ export default function Login() {
             })
     }
 
-    const HandleUsernameChange = (e : React.ChangeEvent<HTMLInputElement>) => {
+    const HandleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUsername(e.target.value);
     }
-    const HandlePasswordChange = (e : React.ChangeEvent<HTMLInputElement>) => {
+    const HandlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPassword(e.target.value);
     }
 
@@ -80,77 +81,83 @@ export default function Login() {
 
 
     return (
-        <div className="d-flex flex-column min-vh-100">
-            <Link href="/">
-                <a>
-                    <button className="btn btn-secondary mt-2 ms-2" ><FontAwesomeIcon icon={faArrowLeftLong} width={20} height={20} /> Back to mainpage</button>
-                </a>
-            </Link>
-            <section className="h-100">
-                <div className="container h-100">
-                    <div className="row justify-content-sm-center h-100">
-                        <div className="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
-                            <div className="text-center my-5">
-                                {<img src="https://getbootstrap.com/docs/5.0/assets/brand/bootstrap-logo.svg" alt="logo" width="100" />}
-                            </div>
-                            <div className="card shadow-lg">
-                                <div className="card-body p-5">
-                                    <h1 className="fs-4 card-title fw-bold mb-4">Login</h1>
-                                    <form method="POST" className="needs-validation" autoComplete="off">
-                                        <div className="mb-3">
-                                            <label className="mb-2 text-muted" htmlFor="username">Username</label>
-                                            <input id="username" type="text" className="form-control" name="username" required autoFocus onChange={HandleUsernameChange} />
-                                            <div className="invalid-feedback">
-                                                Username is invalid
-                                            </div>
-                                        </div>
+        <>
+            <Head>
+                <title>Login</title>
+            </Head>
 
-                                        <div className="mb-3">
-                                            <div className="mb-2 w-100">
-                                                <label className="text-muted" htmlFor="password">Password</label>
-                                                <a href="#" className="float-end" onClick={() => { alert("We still didn't create mailing services please recreate a new account.") }}>
-                                                    Forgot Password?
-                                                </a>
-                                            </div>
-                                            <input id="password" type="password" className="form-control" name="password" required onChange={HandlePasswordChange} />
-                                            <div className="invalid-feedback">
-                                                Password is required
-                                            </div>
-                                        </div>
-                                        <div className="alert alert-danger" role="alert" style={{ display: error ? "block" : "none" }} >
-                                            {error ? error + Cooldown() : ""}
-                                        </div>
-                                        <div className="d-flex align-items-center">
-                                            <div className="form-check">
-                                                <input type="checkbox" name="remember" id="remember" className="form-check-input" defaultChecked={true} />
-                                                <label htmlFor="remember" className="form-check-label">Remember Me</label>
-                                            </div>
-                                            <button type="submit" className="btn btn-primary ms-auto" onClick={HandleLogin} >
-                                                Login
-                                            </button>
-                                        </div>
-                                    </form>
+            <div className="d-flex flex-column min-vh-100">
+                <Link href="/">
+                    <a>
+                        <button className="btn btn-secondary mt-2 ms-2" ><FontAwesomeIcon icon={faArrowLeftLong} width={20} height={20} /> Back to mainpage</button>
+                    </a>
+                </Link>
+                <section className="h-100">
+                    <div className="container h-100">
+                        <div className="row justify-content-sm-center h-100">
+                            <div className="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
+                                <div className="text-center my-5">
+                                    {<Image src="/bootstrap-logo.svg" alt="logo" width="120" height="100" />}
                                 </div>
-                                <div className="card-footer py-3 border-0">
-                                    <div className="text-center">
-                                        Don't have an account ?
-                                        <Link href="/signup">
-                                            <a className="text-dark ms-1">Create One</a>
-                                        </Link>
+                                <div className="card shadow-lg">
+                                    <div className="card-body p-5">
+                                        <h1 className="fs-4 card-title fw-bold mb-4">Login</h1>
+                                        <form method="POST" className="needs-validation" autoComplete="off">
+                                            <div className="mb-3">
+                                                <label className="mb-2 text-muted" htmlFor="username">Username</label>
+                                                <input id="username" type="text" className="form-control" name="username" required autoFocus onChange={HandleUsernameChange} />
+                                                <div className="invalid-feedback">
+                                                    Username is invalid
+                                                </div>
+                                            </div>
+
+                                            <div className="mb-3">
+                                                <div className="mb-2 w-100">
+                                                    <label className="text-muted" htmlFor="password">Password</label>
+                                                    <a href="#" className="float-end" onClick={() => { alert("We still didn't create mailing services please recreate a new account.") }}>
+                                                        Forgot Password?
+                                                    </a>
+                                                </div>
+                                                <input id="password" type="password" className="form-control" name="password" required onChange={HandlePasswordChange} />
+                                                <div className="invalid-feedback">
+                                                    Password is required
+                                                </div>
+                                            </div>
+                                            <div className="alert alert-danger" role="alert" style={{ display: error ? "block" : "none" }} >
+                                                {error ? error + Cooldown() : ""}
+                                            </div>
+                                            <div className="d-flex align-items-center">
+                                                <div className="form-check">
+                                                    <input type="checkbox" name="remember" id="remember" className="form-check-input" defaultChecked={true} />
+                                                    <label htmlFor="remember" className="form-check-label">Remember Me</label>
+                                                </div>
+                                                <button type="submit" className="btn btn-primary ms-auto" onClick={HandleLogin} >
+                                                    Login
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div className="card-footer py-3 border-0">
+                                        <div className="text-center">
+                                            Don&apos;t have an account ?
+                                            <Link href="/signup">
+                                                <a className="text-dark ms-1">Create One</a>
+                                            </Link>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="text-center mt-5 text-muted">
-                                <FontAwesomeIcon icon={faCode} height={20} width={20} /> with <FontAwesomeIcon icon={faMugHot} height={20} width={20} /> By <a href="https://abderraziq.com" className="text-muted fw-bold">Sorrow</a> & <a href="https://Yahya-rabii.github.io" className="text-muted fw-bold">Yahya-rabii </a><br />
-                                Click on the names to visit our websites.
+                                <div className="text-center mt-5 text-muted">
+                                    <FontAwesomeIcon icon={faCode} height={20} width={20} /> with <FontAwesomeIcon icon={faMugHot} height={20} width={20} /> By <a href="https://abderraziq.com" className="text-muted fw-bold">Sorrow</a> & <a href="https://Yahya-rabii.github.io" className="text-muted fw-bold">Yahya-rabii </a><br />
+                                    Click on the names to visit our websites.
+                                </div>
                             </div>
                         </div>
                     </div>
+                </section>
+                <div className="mt-auto">
+                    <Footer />
                 </div>
-            </section>
-            <div className="mt-auto">
-                <Footer />
             </div>
-        </div>
+        </>
     )
 }

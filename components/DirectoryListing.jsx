@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import Err404 from "./Err404";
 
+import Image from "next/image";
 import Link from "next/link";
 import Footer from "./Footer";
 
@@ -177,7 +178,7 @@ export default function DirectoryListing(props) {
                                 <hr />
                                 <div className="dropdown pb-4">
                                     <a href="#" className="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <img src="https://apexturbine.com/wp-content/uploads/2019/07/default_user_icon16-09-201474352760.png" alt="hugenerd" width="30" height="30" className="rounded-circle" />
+                                        <Image src="/profile_image.png" width="30" height="30" className="rounded-circle" alt="logo"/>
                                         <span className="d-none d-sm-inline mx-1">{username ? username : "Click here to sign in"}</span>
                                     </a>
                                     <ul className="dropdown-menu dropdown-menu-dark text-small shadow">
