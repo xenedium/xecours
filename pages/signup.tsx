@@ -10,7 +10,7 @@ import Link from "next/link";
 import Footer from "../components/Footer";
 
 
-export default function SignUp(props) {
+export default function SignUp() {
 
     useEffect(() => {
         document.title = "Sign Up";
