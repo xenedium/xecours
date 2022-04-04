@@ -3,10 +3,10 @@ import { PrismaClient } from '@prisma/client'
 import { sign } from 'jsonwebtoken'
 import { createHash } from 'crypto'
 
+const prisma = new PrismaClient();
+const secret = process.env.SECRET;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const prisma = new PrismaClient();
-    const secret = process.env.SECRET;
 
     res.setHeader('Content-Type', 'application/json');
 
