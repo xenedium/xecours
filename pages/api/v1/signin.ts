@@ -26,8 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return;
     }
 
-    try
-    {
+    try {
         const user = await prisma.users.findFirst({
             where: {
                 username: username,
@@ -42,14 +41,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return;
         }
 
-        const token = sign({username: user.username}, secret, {expiresIn: '72h'});
+        const token = sign({ username: user.username }, secret, { expiresIn: '72h' });
         res.status(200).json({
             token: token
         });
 
     }
-    catch (error)
-    {
+    catch (error) {
         res.status(500).json({
             error: 'Internal server error'
         });

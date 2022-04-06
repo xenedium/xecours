@@ -230,6 +230,7 @@ export default function DirectoryListing(props) {
                                 </thead>
                                 <tbody>
                                     {
+                                        res.status === 200 ?
                                         fileData.map((file, index) => {
                                             return (
                                                 <tr key={index}>
@@ -254,7 +255,7 @@ export default function DirectoryListing(props) {
                                                     </td>
                                                 </tr>
                                             )
-                                        })
+                                        }) : <></>
 
                                     }
                                 </tbody>
