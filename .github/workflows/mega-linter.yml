@@ -1,7 +1,7 @@
 ---
 # MegaLinter GitHub Action configuration file
 # More info at https://megalinter.github.io
-name: MegaLinter
+name: Linters
 
 on:
   # Trigger mega-linter at every push. Action will also be visible from Pull Requests to master
@@ -46,7 +46,7 @@ jobs:
 
       # eslint
       - name: next-eslint
-        run: npm run lint
+        run: npm i && npm run lint
       
       # Upload MegaLinter artifacts
       - name: Archive production artifacts
