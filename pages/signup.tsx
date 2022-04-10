@@ -67,7 +67,7 @@ export default function SignUp() {
 
     const HandleSignUp = (e: React.MouseEvent<HTMLInputElement>) => {
         e.preventDefault();
-        fetch("/api/v1/create",
+        fetch("/api/v1/signup",
             {
                 method: "POST",
                 headers:

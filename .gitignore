@@ -33,9 +33,11 @@ yarn-error.log*
 
 # prisma
 .env
+prisma/migrations
 
 # megalinter
 report
 
 # public
 /public
+
