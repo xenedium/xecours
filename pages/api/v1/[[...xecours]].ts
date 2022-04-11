@@ -9,6 +9,11 @@ import path from "path";
 const prisma = new PrismaClient();
 const SECRET = process.env.SECRET;
 
+enum FileType {
+    File,
+    Directory
+}
+
 const CheckPath = (reqUrl: string, path: string, res: NextApiResponse) => {
     if (reqUrl.includes('..')) {
         res.status(403).json({
@@ -24,7 +29,6 @@ const CheckPath = (reqUrl: string, path: string, res: NextApiResponse) => {
     }
     return true;
 }
-
 
 const DirectoryList = async (dirPath: string, res: NextApiResponse) => {             //Very slow avg 1350ms....
     try {
@@ -57,7 +61,6 @@ const DirectoryList = async (dirPath: string, res: NextApiResponse) => {        
     }
 }
 
-
 const DecodeToken = (token: string) => {
     try {
         return verify(token, SECRET) as string | JwtPayload | any;
@@ -66,7 +69,6 @@ const DecodeToken = (token: string) => {
         return null;
     }
 }
-
 
 const VerifyUser = async (req: NextApiRequest, res: NextApiResponse) => {
     const token = req.headers.authorization?.split(" ")[1];
@@ -106,7 +108,7 @@ const VerifyUser = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 }
 
-const AddDeletedFile = async (delFile: string, username: string, res: NextApiResponse) => {            // Issue here
+const AddDeletedFile = async (delFile: string, username: string, res: NextApiResponse) => {
     try {
         return await prisma.deleted_files.create({
             data: {
@@ -129,6 +131,55 @@ const HandleGet = async (req: NextApiRequest, res: NextApiResponse) => {
     CheckPath(req.url, inPath, res) && await DirectoryList(inPath, res);           // Very slow avg 1350ms....
 }
 
+const DeleteAndRemove = async (fPath: string, res: NextApiResponse) => {
+    try {
+        if ((await stat(fPath)).isDirectory()) {
+            await rm(fPath, { recursive: true, force: true });
+            return RemoveDeletedFile(fPath, FileType.Directory, res);
+        }
+        else {
+            await rm(fPath, { force: true });
+            return RemoveDeletedFile(fPath, FileType.File, res);
+        }
+    }
+    catch (error) {
+        res.status(500).json({
+            error: 'Internal server error'
+        });
+        console.error(error);
+        return false;
+    }
+}
+
+const RemoveDeletedFile = async (delFile: string, fType: FileType, res: NextApiResponse) => {
+    try {
+        if (fType === FileType.Directory) {
+            await prisma.files.deleteMany({
+                where: {
+                    path: {
+                        startsWith: delFile
+                    }
+                }
+            })
+
+        }
+        else {
+            await prisma.files.deleteMany({
+                where: {
+                    path: delFile
+                }
+            })
+        }
+        return true;
+    }
+    catch (error) {
+        res.status(500).json({
+            error: 'Internal server error'
+        });
+        console.error(error);
+        return false;
+    }
+}
 
 const HandleDelete = async (req: NextApiRequest, res: NextApiResponse) => {
     const user = await VerifyUser(req, res);
@@ -139,34 +190,14 @@ const HandleDelete = async (req: NextApiRequest, res: NextApiResponse) => {
     if (!CheckPath(req.url, filePath, res)) return;
 
     const ress = await AddDeletedFile(filePath, user.username, res);
-    console.log(ress);
-    console.log(!ress);
     if (!ress) return;
 
-    if ((await stat(filePath)).isDirectory()) {
-        await rm(filePath, { recursive: true, force: true });
-        await prisma.deleted_files.deleteMany({                 //Issue here
-            where: {
-                path: {
-                    contains: filePath
-                }
-            }
-        });
-        res.status(200).json({
-            message: 'Directory deleted'
-        });
-    }
-    else {
-        await rm(filePath, { force: true });
-        await prisma.deleted_files.deleteMany({                 //Issue here
-            where: {
-                path: filePath
-            }
-        });
-        res.status(200).json({
-            message: 'File deleted'
-        });
-    }
+    if (!DeleteAndRemove(filePath, res)) return;
+
+    res.status(200).json({
+        message: 'Directory deleted'
+    });
+
 
 }
 
