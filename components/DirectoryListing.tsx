@@ -8,9 +8,11 @@ import { useRouter } from "next/router";
 import Footer from "./Footer";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { faLeftLong, faPlus, faUpload } from "@fortawesome/free-solid-svg-icons";
 
-// TODO: FIX DROPDOWN / LOOK FOR A BETTER LOADER SVG / MORE UI FEATURES
+import { DropdownButton, Alert, Dropdown } from "react-bootstrap"
+
 
 interface FileInfo {
     name: string;
@@ -28,6 +30,8 @@ interface UserInfo {
     last_name: string;
     is_mod: number;
 }
+
+// TODO: IMPLEMENT UPLOAD / FIX LOADER / UI FIXES / SHOW ALERT ERROR IF UPLOAD DELETE OR CREATE DIR FAILS / CHANGE BOOTSTRAP LOGO / FAVICON / AND CLEAR THE PUBLIC FOLDER 
 
 export default function DirectoryListing() {
 
@@ -59,6 +63,20 @@ export default function DirectoryListing() {
             }
             )
     }
+    const ClearToken = () => {
+        localStorage.removeItem("token");
+        setIsLoggedIn(false);
+        setUserInfo(null);
+    }
+    const ShowAlert = (message: string, alertType: string) => {
+        setAlertMessage(message);
+        setAlertVariant(alertType);
+        setShowAlert(true);
+        setTimeout(() => {
+            setShowAlert(false);
+        }, 3000);
+    }
+
 
     const router = useRouter();
 
@@ -69,14 +87,15 @@ export default function DirectoryListing() {
     const [apiResponseStatus, setApiResponseStatus] = useState<number>();
 
     const [path, setPath] = useState<string>("/");
-    const [prevPath, setPrevPath] = useState<string>("/");
 
+    const [showAlert, setShowAlert] = useState<boolean>(false);
+    const [alertVariant, setAlertVariant] = useState<string>("danger");
+    const [alertMessage, setAlertMessage] = useState<string>("You do not have enough permissions to do this action !");
 
     useEffect(() => {
         FetchFiles();
         VerifyUser();
         setPath(router.asPath);
-        setPrevPath(router.asPath.split("/").slice(0, -1).join("/"));
     }, [router]);
 
 
@@ -89,9 +108,9 @@ export default function DirectoryListing() {
     const FormatDate = (date: Date) => {
         return new Date(date).toLocaleString();
     }
-
-    const HandleDelete = (filepath: string) => {        //Need to alerts users that they don't have permission to delete
-        if (!isLoggedIn) alert("You must be logged in to delete files");
+    const HandleDelete = (filepath: string) => {
+        if (!isLoggedIn) ShowAlert("You need to be logged in to delete files !", "danger");
+        else if (!userInfo.is_mod) ShowAlert("You need to be a moderator to delete files !", "danger");
         else {
             fetch("/api/v1" + filepath,
                 {
@@ -108,8 +127,9 @@ export default function DirectoryListing() {
                 })
         }
     };
-    const HandleFileUpload = (e) => {
-        if (!isLoggedIn) alert("You must be logged in to delete files");
+    const HandleFileUpload = (e: any) => {
+        if (!isLoggedIn) ShowAlert("You need to be logged in to upload files !", "danger");
+        else if (!userInfo.is_mod) ShowAlert("You need to be a moderator to upload files !", "danger");
         else {
             e.preventDefault();
             let formData = new FormData();
@@ -132,8 +152,9 @@ export default function DirectoryListing() {
                 })
         }
     };
-    const HandleNewDir = (e) => {               //Need to alert users that they don't have permission to create new directories
-        if (!isLoggedIn) alert("You must be logged in to delete files");
+    const HandleNewDir = (e: any) => {
+        if (!isLoggedIn) ShowAlert("You must be logged in to create new directories", "danger");
+        else if (!userInfo.is_mod) ShowAlert("You do not have enough permissions to do this action !", "danger");
         else {
             const name = prompt("Enter the name of the new directory");
             if (name === null) return;
@@ -164,53 +185,48 @@ export default function DirectoryListing() {
                 <Head>
                     <title>Directory Listing</title>
                 </Head>
+                <Alert show={showAlert} variant={alertVariant} onClick={() => setShowAlert(false)} dismissible className="fixed-top align-items-center d-flex flex-column opacity-75">
+                    <Alert.Heading>{alertMessage}</Alert.Heading>
+                </Alert>
                 <div className="container-fluid">
                     <div className="row flex-nowrap">
                         <div className="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
                             <div className="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
-                                <a href="/" className="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                                <span className="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
                                     <span className="fs-5 d-none d-sm-inline">Current path: {path}</span>
-                                </a>
+                                </span>
                                 <hr />
-                                <div className="dropdown pb-4">
-                                    <a className="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <Image src="/profile_image.png" width="30" height="30" className="rounded-circle" alt="logo" />
-                                        <span className="d-none d-sm-inline mx-1">{isLoggedIn ? userInfo.username : "Click here to sign in"}</span>
-                                    </a>
-                                    <ul className="dropdown-menu dropdown-menu-dark text-small shadow">
-                                        {
-                                            /*
-                                            <div>
-                                                <li><a className="dropdown-item" href="#">New file</a></li>
-                                                <li><a className="dropdown-item" href="#">Settings</a></li>
-                                                <li><a className="dropdown-item" href="#">Profile</a></li>
-                                                <li>
-                                                    <hr className="dropdown-divider" />
-                                                </li>
-                                            </div>
-                                            */
+                                <DropdownButton title={<><FontAwesomeIcon icon={faUser} /><span className="d-none d-sm-inline mx-3">{isLoading ? "Loading..." : isLoggedIn ? userInfo.username : "Click here to Login"}</span></>}>
+                                    <Dropdown.Item onClick={() => {
+                                        if (isLoggedIn) {
+                                            ClearToken();
+                                            ShowAlert("Successfully logged out !", "warning");
                                         }
+                                        else router.push("/signin")
+                                    }}>
+                                        <span>
+                                            {isLoggedIn ? "Log out" : "Log In"}
+                                        </span>
+                                    </Dropdown.Item>
+                                </DropdownButton>
 
-                                        <li><a className="dropdown-item" onClick={() => {
-                                            if (!isLoggedIn) window.location.href = "/login";
-                                            else {
-                                                localStorage.removeItem("token");
-                                                setIsLoggedIn(false);
-                                                window.location.reload();
-                                            }
-                                        }}>{isLoggedIn ? "Log out" : "Sign In"}</a></li>
-                                    </ul>
-                                </div>
                             </div>
                         </div>
                         <div className="col py-3 d-flex flex-column min-vh-100">
                             <div className="d-flex bd-highlight mb-3">
-                                <Link href={prevPath} replace={true}>
-                                    <a><button className="btn btn-dark me-auto p-2 bd-highlight"><FontAwesomeIcon icon={faLeftLong} width={20} height={20} /> Previous folder </button></a>
-                                </Link>
+
+                                <span onClick={() => {
+                                    setIsLoading(true);
+                                    router.back();
+                                }}><button className="btn btn-dark me-auto p-2 bd-highlight"><FontAwesomeIcon icon={faLeftLong} width={20} height={20} /> Previous folder </button></span>
+
 
                                 <button className="btn btn-dark p-2 bd-highlight mx-2" onClick={HandleNewDir}><FontAwesomeIcon icon={faPlus} width={20} height={20} /> New Directory </button>
-                                <button className="btn btn-dark p-2 bd-highlight" onClick={() => { document.getElementById("filebtn").click() }}><FontAwesomeIcon icon={faUpload} width={20} height={20} /> Upload File </button>
+                                <button className="btn btn-dark p-2 bd-highlight" onClick={() => {
+                                    if (!isLoggedIn) ShowAlert("You must be logged in to upload files !", "danger");
+                                    else if (!userInfo.is_mod) ShowAlert("You do not have enough permissions to do this action !", "danger");
+                                    else document.getElementById("filebtn").click()
+                                }}><FontAwesomeIcon icon={faUpload} width={20} height={20} /> Upload File </button>
                                 <input type="file" id="filebtn" multiple hidden onChange={HandleFileUpload} />
                             </div>
 
@@ -234,13 +250,12 @@ export default function DirectoryListing() {
                                                         <td>
                                                             {
                                                                 file.type === "dir" ?
-                                                                    <Link href={`${path}/${file.name}`.replace("//", "/")}>
-                                                                        <a>
-                                                                            <button className={file.type === "dir" ? "btn btn-primary" : "btn btn-success"}>
-                                                                                {file.name}
-                                                                            </button>
-                                                                        </a>
-                                                                    </Link>
+                                                                    <button className={file.type === "dir" ? "btn btn-primary" : "btn btn-success"} onClick={() => {
+                                                                        setIsLoading(true)
+                                                                        router.push(`${path}/${file.name}`.replace("//", "/"))
+                                                                    }}>
+                                                                        {file.name}
+                                                                    </button>
                                                                     :
                                                                     <a href={`${path}/${file.name}`.replace("//", "/")}>
                                                                         <button className={file.type === "dir" ? "btn btn-primary" : "btn btn-success"}>

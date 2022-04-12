@@ -113,10 +113,7 @@ export default function Login() {
 
                                             <div className="mb-3">
                                                 <div className="mb-2 w-100">
-                                                    <label className="text-muted" htmlFor="password">Password</label>
-                                                    <a href="#" className="float-end" onClick={() => { alert("We still didn't create mailing services please recreate a new account.") }}>
-                                                        Forgot Password?
-                                                    </a>
+                                                    <label className="text-muted" htmlFor="password">Password</label>       
                                                 </div>
                                                 <input id="password" type="password" className="form-control" name="password" required onChange={HandlePasswordChange} />
                                                 <div className="invalid-feedback">
