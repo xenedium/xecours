@@ -1,9 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from "next"
-import { PrismaClient } from '@prisma/client'
+import { prisma } from "../../../db";
 import { sign } from 'jsonwebtoken'
 import { createHash } from 'crypto'
 
-const prisma = new PrismaClient();
+
 const secret = process.env.SECRET;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

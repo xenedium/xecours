@@ -1,12 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from "next"
 import type { JwtPayload } from "jsonwebtoken";
-import { Prisma, PrismaClient } from '@prisma/client'
+import { prisma } from "../../../db";
 import { readdir, rm, stat } from "fs/promises";
 import { existsSync } from "fs";
 import { verify } from "jsonwebtoken";
 import path from "path";
 
-const prisma = new PrismaClient();
 const SECRET = process.env.SECRET;
 
 enum FileType {

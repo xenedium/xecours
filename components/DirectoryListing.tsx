@@ -29,7 +29,7 @@ interface UserInfo {
     is_mod: number;
 }
 
-// TODO: IMPLEMENT UPLOAD / FIX PRISMA INSTANCES ISSUE 
+// TODO: IMPLEMENT UPLOAD 
 
 export default function DirectoryListing() {
 

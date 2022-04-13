@@ -1,9 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from "next"
 import type { JwtPayload } from "jsonwebtoken";
-import { PrismaClient } from "@prisma/client"
+import { prisma } from "../../../../db";
 import { verify } from "jsonwebtoken";
 
-const prisma = new PrismaClient();
+
 const SECRET = process.env.SECRET;
 
 
