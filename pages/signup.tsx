@@ -5,10 +5,9 @@ import {
     faCode,
     faMugHot,
 } from "@fortawesome/free-solid-svg-icons";
-
+import { MagicSpinner } from "react-spinners-kit";
 import Link from "next/link";
 import Footer from "../components/Footer";
-import Image from "next/image";
 import Head from "next/head";
 
 export default function SignUp() {
@@ -114,8 +113,8 @@ export default function SignUp() {
                     <div className="container h-100">
                         <div className="row justify-content-sm-center h-100">
                             <div className="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
-                                <div className="text-center my-5">
-                                    {<Image src="/bootstrap-logo.svg" alt="logo" width="120" height="100" />}
+                                <div className="text-center my-5 d-flex flex-column align-content-center align-items-center">
+                                    <MagicSpinner size={100} color="#000000" />
                                 </div>
                                 <div className="card shadow-lg">
                                     <div className="card-body p-5">

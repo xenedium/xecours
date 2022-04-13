@@ -5,10 +5,10 @@ import {
     faCode,
     faMugHot,
 } from "@fortawesome/free-solid-svg-icons";
+import { MagicSpinner } from "react-spinners-kit";
 import Link from "next/link";
 import Footer from "../components/Footer";
 import Head from "next/head";
-import Image from "next/image";
 
 export default function Login() {
     useEffect(() => {
@@ -96,8 +96,8 @@ export default function Login() {
                     <div className="container h-100">
                         <div className="row justify-content-sm-center h-100">
                             <div className="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
-                                <div className="text-center my-5">
-                                    {<Image src="/bootstrap-logo.svg" alt="logo" width="120" height="100" />}
+                                <div className="text-center my-5 d-flex flex-column align-content-center align-items-center">
+                                    <MagicSpinner size={100} color="#000000" />
                                 </div>
                                 <div className="card shadow-lg">
                                     <div className="card-body p-5">
@@ -113,7 +113,7 @@ export default function Login() {
 
                                             <div className="mb-3">
                                                 <div className="mb-2 w-100">
-                                                    <label className="text-muted" htmlFor="password">Password</label>       
+                                                    <label className="text-muted" htmlFor="password">Password</label>
                                                 </div>
                                                 <input id="password" type="password" className="form-control" name="password" required onChange={HandlePasswordChange} />
                                                 <div className="invalid-feedback">

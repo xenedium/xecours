@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Err404 from "./Err404";
-
-import Image from "next/image";
-import Link from "next/link";
+import { join } from "path";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import Footer from "./Footer";
@@ -10,7 +8,7 @@ import Footer from "./Footer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { faLeftLong, faPlus, faUpload } from "@fortawesome/free-solid-svg-icons";
-
+import { ClapSpinner } from "react-spinners-kit";
 import { DropdownButton, Alert, Dropdown } from "react-bootstrap"
 
 
@@ -31,12 +29,12 @@ interface UserInfo {
     is_mod: number;
 }
 
-// TODO: IMPLEMENT UPLOAD / FIX LOADER / UI FIXES / SHOW ALERT ERROR IF UPLOAD DELETE OR CREATE DIR FAILS / CHANGE BOOTSTRAP LOGO / FAVICON / CLEAR THE PUBLIC FOLDER / FIX PRISMA INSTANCES ISSUE 
+// TODO: IMPLEMENT UPLOAD / FIX PRISMA INSTANCES ISSUE 
 
 export default function DirectoryListing() {
 
     const FetchFiles = async () => {
-        fetch("/api/v1" + window.location.pathname)
+        fetch("/api/v1" + window.location.pathname )
             .then(res => {
                 setApiResponseStatus(res.status);
                 return res.json()
@@ -124,6 +122,9 @@ export default function DirectoryListing() {
                     if (res.status === 200) {
                         window.location.reload();
                     }
+                    else {
+                        ShowAlert("An error occured while deleting the file !", "danger");
+                    }
                 })
         }
     };
@@ -149,6 +150,9 @@ export default function DirectoryListing() {
                     if (res.status === 200) {
                         window.location.reload();
                     }
+                    else {
+                        ShowAlert("An error occured while uploading files !", "danger");
+                    }
                 })
         }
     };
@@ -167,12 +171,15 @@ export default function DirectoryListing() {
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        path: path + name
+                        path: join(path, name)
                     })
                 })
                 .then(res => {
                     if (res.status === 200) {
                         window.location.reload();
+                    }
+                    else {
+                        ShowAlert("An error occured while creating the directory !", "danger");
                     }
                 })
         }
@@ -196,7 +203,7 @@ export default function DirectoryListing() {
                                     <span className="fs-5 d-none d-sm-inline">Current path: {path}</span>
                                 </span>
                                 <hr />
-                                <DropdownButton title={<><FontAwesomeIcon icon={faUser} /><span className="d-none d-sm-inline mx-3">{isLoading ? "Loading..." : isLoggedIn ? userInfo.username : "Click here to Login"}</span></>}>
+                                <DropdownButton title={<><FontAwesomeIcon icon={faUser} width={14} height={16} /><span className="d-none d-sm-inline mx-3">{isLoading ? "Loading..." : isLoggedIn ? userInfo.username : "Not logged In"}</span></>}>
                                     <Dropdown.Item onClick={() => {
                                         if (isLoggedIn) {
                                             ClearToken();
@@ -214,8 +221,8 @@ export default function DirectoryListing() {
                         </div>
                         <div className="col py-3 d-flex flex-column min-vh-100">
                             <div className="d-flex bd-highlight mb-3">
-
                                 <span onClick={() => {
+                                    if (path === "/") return;
                                     setIsLoading(true);
                                     router.back();
                                 }}><button className="btn btn-dark me-auto p-2 bd-highlight"><FontAwesomeIcon icon={faLeftLong} width={20} height={20} /> Previous folder </button></span>
@@ -243,6 +250,7 @@ export default function DirectoryListing() {
                                 </thead>
                                 <tbody>
                                     {
+                                        !isLoading ?
                                         files.length ?
                                             files.map((file, index) => {
                                                 return (
@@ -279,11 +287,11 @@ export default function DirectoryListing() {
                                                         </td>
                                                     </tr>
                                                 )
-                                            }) : <></>
+                                            }) : <></> : <></>
                                     }
                                 </tbody>
                             </table>
-                            {isLoading ? <Image src={"/three-dots.svg"} alt="" layout="fill" /> : <></>}
+                            {isLoading ? <div className="d-flex flex-column align-content-center align-items-center"><ClapSpinner size={100}/></div> : <></>}
                             <div className="mt-auto">
                                 <Footer />
                             </div>
