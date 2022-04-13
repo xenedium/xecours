@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import Err404 from "./Err404";
 import { join } from "path";
 import Head from "next/head";
@@ -128,7 +128,7 @@ export default function DirectoryListing() {
                 })
         }
     };
-    const HandleFileUpload = (e: any) => {
+    const HandleFileUpload = (e : ChangeEvent<HTMLInputElement>) => {
         if (!isLoggedIn) ShowAlert("You need to be logged in to upload files !", "danger");
         else if (!userInfo.is_mod) ShowAlert("You need to be a moderator to upload files !", "danger");
         else {
