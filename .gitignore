@@ -38,6 +38,4 @@ prisma/migrations
 # megalinter
 report
 
-# public
-/public
 
