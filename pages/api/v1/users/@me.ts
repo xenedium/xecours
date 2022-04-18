@@ -36,12 +36,6 @@ const VerifyUser = async (req: NextApiRequest, res: NextApiResponse) => {
                 username: decoded.username
             }
         })
-        if (!user.is_mod) {
-            res.status(403).json({
-                error: 'Forbidden'
-            });
-            return null;
-        }
         return user;
     }
     catch (error) {
